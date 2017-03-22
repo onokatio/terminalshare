@@ -1,15 +1,15 @@
 #!/bin/zsh
 
 function sendloop(){
-	echo "" > typescript
 	while :;do
-		ls=(`/bin/ls -l typescript`)
+		ls=(`/bin/ls -l sendbuf`)
 		export old=$new
 		export new=$ls[5]
 		diff=$((new-old));
-		tail -c $diff typescript | nc localhost 12345
+		tail -c $diff sendbuf | nc $1 12345
 	done
 }
-rm typescript
-sendloop &
-script -fqt sendbuf
+sendloop 2>&1 > /dev/null &
+PID=$!
+script -fq sendbuf
+kill -9 $PID
