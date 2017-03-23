@@ -1,15 +1,13 @@
 #!/bin/zsh
 
 function sendloop(){
-	while :;do
-		ls=(`/bin/ls -l sendbuf`)
-		export old=$new
-		export new=$ls[5]
-		diff=$((new-old));
-		tail -c $diff sendbuf | nc $1 12345
-	done
+	ls=(`/bin/ls -l sendbuf`)
+	export old=$new
+	export new=$ls[5]
+	diff=$((new-old));
+	tail -c $diff sendbuf | nc localhost 12345
 }
-sendloop 2>&1 > /dev/null &
+sendloop && while :;do sendloop 2>&1 > /dev/null ;done &
 PID=$!
 script -fq sendbuf
-kill -9 $PID
+#kill -9 $PID
